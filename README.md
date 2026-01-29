@@ -19,6 +19,11 @@ This project demonstrates Node.js code with 10 dependencies that have known secu
 | set-value (utils) | 2.0.0 | JavaScript | CVE-2019-10747 | Prototype Pollution |
 | ua-parser-js (portal) | 0.7.28 | JavaScript | CVE-2021-27292 | ReDoS |
 | mem (cache) | 4.0.0 | JavaScript | CVE-2018-16487 | Prototype Pollution |
+| js-yaml | 3.13.0 | JavaScript | CVE-2019-7609 | Code Injection |
+| tar | 4.4.1 | JavaScript | CVE-2018-20834 | Arbitrary File Overwrite |
+| jsonwebtoken | 8.3.0 | JavaScript | CVE-2018-1000531 | Verification Bypass |
+| underscore | 1.12.0 | JavaScript | CVE-2021-23358 | Arbitrary Code Execution |
+| validator | 10.11.0 | JavaScript | CVE-2019-1010235 | XSS via isURL |
 
 ## Installation
 

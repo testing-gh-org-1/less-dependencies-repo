@@ -15,6 +15,11 @@ const marked = require('marked');
 const setValue = require('set-value');
 const UAParser = require('ua-parser-js');
 const mem = require('mem');
+const yaml = require('js-yaml');
+const tar = require('tar');
+const jwt = require('jsonwebtoken');
+const underscore = require('underscore');
+const validator = require('validator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -130,6 +135,65 @@ app.get('/api/cache/fetch', async (req, res) => {
     }
 });
 
+// js-yaml (CVE-2019-7609 - Code Injection)
+app.get('/api/yaml/parse', (req, res) => {
+    const yamlStr = req.query.yaml || 'name: test\nversion: 1.0';
+    try {
+        const parsed = yaml.safeLoad(yamlStr);
+        res.json(parsed);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// tar (CVE-2018-20834 - Arbitrary File Overwrite)
+app.get('/api/tar/info', (req, res) => {
+    res.json({
+        message: 'Tar module loaded for archive operations',
+        version: '4.4.1',
+        vulnerability: 'CVE-2018-20834 - Arbitrary File Overwrite'
+    });
+});
+
+// jsonwebtoken (CVE-2018-1000531 - Verification Bypass)
+app.post('/api/jwt/sign', (req, res) => {
+    const payload = req.body || { user: 'test', role: 'user' };
+    const secret = 'vulnerable-secret-key';
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    res.json({ token });
+});
+
+app.get('/api/jwt/verify', (req, res) => {
+    const token = req.query.token;
+    const secret = 'vulnerable-secret-key';
+    try {
+        const decoded = jwt.verify(token, secret);
+        res.json({ valid: true, decoded });
+    } catch (error) {
+        res.status(401).json({ valid: false, error: error.message });
+    }
+});
+
+// underscore (CVE-2021-23358 - Arbitrary Code Execution)
+app.get('/api/underscore/template', (req, res) => {
+    const templateStr = req.query.template || 'Hello, <%= name %>!';
+    const name = req.query.name || 'World';
+    const compiled = underscore.template(templateStr);
+    const result = compiled({ name });
+    res.send(result);
+});
+
+// validator (CVE-2019-1010235 - XSS via isURL)
+app.get('/api/validator/check', (req, res) => {
+    const input = req.query.input || 'test@example.com';
+    res.json({
+        isEmail: validator.isEmail(input),
+        isURL: validator.isURL(input),
+        isAlpha: validator.isAlpha(input),
+        isEmpty: validator.isEmpty(input)
+    });
+});
+
 // jQuery reference (CVE-2019-11358 - Prototype Pollution)
 // Note: jQuery is typically used client-side, included here for demonstration
 app.get('/client/jquery', (req, res) => {
@@ -168,6 +232,12 @@ app.get('/', (req, res) => {
             'GET /api/utils/set - Set-value utils demo',
             'GET /api/portal/user-agent - UA-Parser portal demo',
             'GET /api/cache/fetch - Mem cache demo',
+            'GET /api/yaml/parse - js-yaml parser demo',
+            'GET /api/tar/info - Tar archive info',
+            'POST /api/jwt/sign - JWT sign demo',
+            'GET /api/jwt/verify - JWT verify demo',
+            'GET /api/underscore/template - Underscore template demo',
+            'GET /api/validator/check - Validator check demo',
             'GET /client/jquery - jQuery client-side demo'
         ]
     });
