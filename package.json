@@ -1,0 +1,27 @@
+{
+  "name": "vulnerable-dependencies-demo",
+  "version": "1.0.0",
+  "description": "Demo project with known vulnerable dependencies for security testing",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha test/*.js"
+  },
+  "dependencies": {
+    "lodash": "4.17.4",
+    "axios": "0.21.1",
+    "set-value": "2.0.0",
+    "ua-parser-js": "0.7.28",
+    "mem": "4.0.0"
+  },
+  "devDependencies": {
+    "mocha": "5.2.0"
+  },
+  "keywords": [
+    "security",
+    "vulnerabilities",
+    "demo"
+  ],
+  "author": "",
+  "license": "MIT"
+}
